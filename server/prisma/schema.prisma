@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String         @id @default(cuid())
+  email        String         @unique
+  passwordHash String
+  sessions     Session[]
+  verifications Verification[]
+  createdAt    DateTime       @default(now())
+}
+
+model Session {
+  token     String   @id
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Verification {
+  id               String    @id @default(cuid())
+  userId           String
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  source           String    // "url" | "manual"
+  listingUrl       String?
+  address          String
+  price            Float?    // SQLite: Decimal unsupported; promote on Postgres
+  agentName        String?
+  agentPhone       String
+  status           String    // "pending" | "calling" | "completed"
+  result           String?   // "verified" | "warning" | "inconclusive"
+  confidence       Float?
+  calleCallId      String?
+  structuredResult String?   // SQLite: Json unsupported; JSON text, promote on Postgres
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@index([userId])
+}
