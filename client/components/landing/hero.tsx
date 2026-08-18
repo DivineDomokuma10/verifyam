@@ -21,7 +21,7 @@ const Hero = () => {
       </p>
 
       <div className="flex flex-col items-center gap-3 sm:flex-row">
-        <Button size="lg" nativeButton={false} render={<a href="#verify" />}>
+        <Button size="lg" nativeButton={false} render={<a href="/verify" />}>
           Verify a listing
           <RiArrowRightLine data-icon="inline-end" />
         </Button>
