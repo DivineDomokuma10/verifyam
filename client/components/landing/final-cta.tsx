@@ -19,7 +19,7 @@ const FinalCta = () => {
           accurate, or not.
         </p>
 
-        <Button size="lg" variant="secondary" nativeButton={false} render={<a href="#verify" />}>
+        <Button size="lg" variant="secondary" nativeButton={false} render={<a href="/verify" />}>
           Verify your first listing free
           <RiArrowRightLine data-icon="inline-end" />
         </Button>

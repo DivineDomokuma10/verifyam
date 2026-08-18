@@ -2,9 +2,11 @@ import { JetBrains_Mono, Merriweather, Raleway } from "next/font/google";
 import type { Metadata } from "next";
 
 import "./globals.css";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils";
 import Header from "@/components/shared/header";
+import ProtectRoutes from "@/components/protect";
 import { ThemeProvider } from "@/providers/theme-provider";
+import ReactQueryProvider from "@/providers/react-query";
 
 const raleway = Raleway({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -45,8 +47,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           defaultTheme="system"
           disableTransitionOnChange
         >
-          <Header />
-          {children}
+          <ReactQueryProvider>
+            <ProtectRoutes>
+              <Header />
+              {children}
+            </ProtectRoutes>
+          </ReactQueryProvider>
         </ThemeProvider>
       </body>
     </html>

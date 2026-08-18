@@ -1,6 +1,10 @@
+"use client";
+
 import { Logo } from "./utils";
 import ThemeToggle from "./theme-toggle";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import SessionStore from "@/store/session";
+import { cn, handleLogout } from "@/utils";
 
 const navLinks = [
   { label: "How it works", href: "#how-it-works" },
@@ -10,6 +14,8 @@ const navLinks = [
 ];
 
 const Header = () => {
+  const sessionData = SessionStore((state) => state.session);
+
   return (
     <header className="flex items-center justify-between rounded-xl px-4 py-4 md:px-8">
       <Logo />
@@ -27,7 +33,36 @@ const Header = () => {
       </nav>
 
       <div className="flex items-center gap-2">
-        <Button size="sm" nativeButton={false} render={<a href="#verify" />}>
+        {sessionData ? (
+          <>
+            <Button
+              size="sm"
+              variant="ghost"
+              nativeButton={false}
+              render={<a href="/dashboard" />}
+            >
+              Dashboard
+            </Button>
+            <button
+              type="button"
+              className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+              onClick={() => void handleLogout()}
+            >
+              Log out
+            </button>
+          </>
+        ) : (
+          <Button
+            size="sm"
+            variant="ghost"
+            nativeButton={false}
+            render={<a href="/login" />}
+          >
+            Log in
+          </Button>
+        )}
+
+        <Button size="sm" nativeButton={false} render={<a href="/verify" />}>
           Verify a listing
         </Button>
         <ThemeToggle />
