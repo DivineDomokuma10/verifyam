@@ -1,6 +1,7 @@
 import { AxiosError } from "axios";
 
 import AuthStore from "@/store/auth";
+import SessionStore from "@/store/session";
 import { OPEN_ROUTE } from "../constant";
 
 export const responseInterceptorErrFunc = async (error: AxiosError) => {
@@ -21,6 +22,8 @@ export const responseInterceptorErrFunc = async (error: AxiosError) => {
   }
 
   AuthStore.getState().clearAuthData?.();
+  SessionStore.getState().mutateSession(null);
+  SessionStore.getState().setLoading(false);
 
   return Promise.reject(error);
 };
