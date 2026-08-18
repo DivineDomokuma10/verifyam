@@ -7,3 +7,5 @@ export const OPEN_ROUTE = [
 export const AUTH_PAGE_ROUTES = ["/login", "/signup"];
 
 export const PUBLIC_PAGE_ROUTES = ["/"];
+
+export const LOGIN_PAGE_ROUTE = "/login";

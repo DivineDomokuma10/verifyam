@@ -6,5 +6,6 @@ export const useGetMe = () => {
   return useQuery({
     queryKey: ["my-profile"],
     queryFn: async () => await AuthApi.getMe(),
+    retry: 0,
   });
 };

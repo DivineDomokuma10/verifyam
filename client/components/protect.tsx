@@ -4,6 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 
 import SessionStore from "@/store/session";
 import { AUTH_PAGE_ROUTES, PUBLIC_PAGE_ROUTES } from "@/utils/constant";
+import { buildLoginUrl } from "@/utils/redirect";
 
 const ProtectRoutes = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
@@ -24,12 +25,10 @@ const ProtectRoutes = ({ children }: { children: ReactNode }) => {
       pathname.startsWith(route),
     );
 
-    const isPublicPage = PUBLIC_PAGE_ROUTES.some((route) =>
-      pathname.startsWith(route),
-    );
+    const isPublicPage = PUBLIC_PAGE_ROUTES.includes(pathname);
 
     if (!sessionData && !isAuthPage && !isPublicPage) {
-      router.replace("/login");
+      router.replace(buildLoginUrl());
       return;
     }
 
@@ -39,7 +38,16 @@ const ProtectRoutes = ({ children }: { children: ReactNode }) => {
     }
   }, [isLoading, sessionData, pathname, router]);
 
-  if (isLoading) {
+  const isAuthPage = AUTH_PAGE_ROUTES.some((route) =>
+    pathname.startsWith(route),
+  );
+
+  const isPublicPage = PUBLIC_PAGE_ROUTES.includes(pathname);
+
+  const isRedirecting =
+    (isAuthPage && sessionData) || (!isAuthPage && !isPublicPage && !sessionData);
+
+  if (isLoading || isRedirecting) {
     return (
       <main className="flex flex-1 items-center justify-center">
         <p className="text-muted-foreground">Loading…</p>

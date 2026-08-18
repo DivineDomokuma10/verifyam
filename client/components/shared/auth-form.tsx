@@ -33,7 +33,9 @@ function getNextPath(): string {
   }
   const params = new URLSearchParams(window.location.search);
   const value = params.get("next");
-  return value && value.startsWith("/") ? value : "/verify";
+  return value && value.startsWith("/") && !value.startsWith("//")
+    ? value
+    : "/verify";
 }
 
 function getMutationError(error: unknown): string {
@@ -59,7 +61,9 @@ export function AuthForm({ mode }: AuthFormProps) {
   const loginMutation = useLoginMutation();
   const signupMutation = useSignupMutation();
 
-  const isPending = isLogin ? loginMutation.isPending : signupMutation.isPending;
+  const isPending = isLogin
+    ? loginMutation.isPending
+    : signupMutation.isPending;
 
   const {
     register,
@@ -102,7 +106,9 @@ export function AuthForm({ mode }: AuthFormProps) {
     <main className="flex flex-1 items-center justify-center px-4 py-16">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>{isLogin ? "Log in" : "Create your account"}</CardTitle>
+          <CardTitle className="font-semibold text-primary text-2xl uppercase">
+            {isLogin ? "Log in" : "Create your account"}
+          </CardTitle>
           <CardDescription>
             {isLogin
               ? "Welcome back. Verify your listings."
@@ -110,12 +116,17 @@ export function AuthForm({ mode }: AuthFormProps) {
           </CardDescription>
         </CardHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} noValidate>
+        <form
+          noValidate
+          className="space-y-5"
+          onSubmit={handleSubmit(onSubmit)}
+        >
           <CardContent className="flex flex-col gap-4">
             <div className="flex flex-col gap-1.5">
               <label htmlFor="email" className="text-sm font-medium">
                 Email
               </label>
+
               <Input
                 id="email"
                 type="email"
@@ -123,9 +134,13 @@ export function AuthForm({ mode }: AuthFormProps) {
                 aria-invalid={Boolean(errors.email)}
                 placeholder="you@example.com"
                 {...register("email")}
+                className="rounded-md p-4 h-12"
               />
+
               {errors.email && (
-                <p className="text-sm text-destructive">{errors.email.message}</p>
+                <p className="text-sm text-destructive">
+                  {errors.email.message}
+                </p>
               )}
             </div>
 
@@ -133,6 +148,7 @@ export function AuthForm({ mode }: AuthFormProps) {
               <label htmlFor="password" className="text-sm font-medium">
                 Password
               </label>
+
               <Input
                 id="password"
                 type="password"
@@ -140,7 +156,9 @@ export function AuthForm({ mode }: AuthFormProps) {
                 aria-invalid={Boolean(errors.password)}
                 placeholder="At least 8 characters"
                 {...register("password")}
+                className="rounded-md p-4 h-12"
               />
+
               {errors.password && (
                 <p className="text-sm text-destructive">
                   {errors.password.message}
@@ -156,7 +174,11 @@ export function AuthForm({ mode }: AuthFormProps) {
           </CardContent>
 
           <CardFooter className="flex flex-col gap-3">
-            <Button type="submit" disabled={isPending} className="w-full">
+            <Button
+              type="submit"
+              disabled={isPending}
+              className="w-full rounded-md p-4 h-12"
+            >
               {isPending
                 ? isLogin
                   ? "Logging in…"
@@ -165,6 +187,7 @@ export function AuthForm({ mode }: AuthFormProps) {
                   ? "Log in"
                   : "Sign up"}
             </Button>
+
             <p className="text-center text-sm text-muted-foreground">
               {isLogin ? (
                 <>

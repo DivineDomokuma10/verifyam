@@ -17,7 +17,7 @@ const Header = () => {
   const sessionData = SessionStore((state) => state.session);
 
   return (
-    <header className="flex items-center justify-between rounded-xl px-4 py-4 md:px-8">
+    <header className="flex flex-wrap items-center justify-between gap-2 rounded-xl px-4 py-4 md:px-8">
       <Logo />
 
       <nav className="hidden items-center gap-6 md:flex">
@@ -62,7 +62,12 @@ const Header = () => {
           </Button>
         )}
 
-        <Button size="sm" nativeButton={false} render={<a href="/verify" />}>
+        <Button
+          size="sm"
+          nativeButton={false}
+          render={<a href="/verify" />}
+          className="hidden sm:inline-flex"
+        >
           Verify a listing
         </Button>
         <ThemeToggle />

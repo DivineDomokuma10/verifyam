@@ -33,6 +33,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
       className={cn(
         "h-full",
+        "overflow-x-clip",
         "font-sans",
         "antialiased",
         raleway.variable,
@@ -40,7 +41,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         merriweatherHeading.variable,
       )}
     >
-      <body className="flex min-h-full flex-col">
+      <body className="flex min-h-full flex-col overflow-x-clip">
         <ThemeProvider
           enableSystem
           attribute="class"
