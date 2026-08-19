@@ -10,7 +10,7 @@ const logoutController = async (req: Request, res: Response) => {
 
   res.clearCookie(env.COOKIE_NAME, { path: "/" });
 
-  res.status(204).end();
+  res.json({ status: "success", message: "Logged out" });
 };
 
 export default logoutController;

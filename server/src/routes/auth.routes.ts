@@ -13,12 +13,16 @@ router.post("/login", loginController);
 
 router.post("/signup", signupController);
 
-router.post("/logout", logoutController);
+router.get("/logout", logoutController);
 
 router.use(requireAuth);
 
 router.get("/me", (req, res) => {
-  res.json(req.user);
+  res.json({
+    status: "success",
+    message: "Authenticated",
+    data: req.user,
+  });
 });
 
 export default router;

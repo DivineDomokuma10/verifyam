@@ -3,7 +3,7 @@ import cookieParser from "cookie-parser";
 
 import { env } from "@/config/env";
 import { corsMiddleware } from "@/middleware";
-import { authRoutes } from "./routes";
+import { authRoutes, verificationRoutes, webhookRoutes } from "./routes";
 
 const app = express();
 
@@ -16,6 +16,8 @@ app.get("/api/health", (_req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/verifications", verificationRoutes);
+app.use("/api/webhooks", webhookRoutes);
 
 app.listen(env.PORT, () => {
   console.log(`Server listening on http://localhost:${env.PORT}`);
