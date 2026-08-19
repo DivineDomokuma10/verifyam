@@ -11,7 +11,7 @@ export async function requireAuth(
   const token = req.cookies?.[env.COOKIE_NAME];
 
   if (!token) {
-    res.status(401).json({ error: "Not authenticated" });
+    res.status(401).json({ status: "error", message: "Not authenticated" });
     return;
   }
 
@@ -21,7 +21,7 @@ export async function requireAuth(
   });
 
   if (!session || session.expiresAt < new Date()) {
-    res.status(401).json({ error: "Session expired" });
+    res.status(401).json({ status: "error", message: "Session expired" });
     return;
   }
 

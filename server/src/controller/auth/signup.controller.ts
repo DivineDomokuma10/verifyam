@@ -8,7 +8,7 @@ const signupController = async (req: Request, res: Response) => {
   const parsed = credentialsSchema.safeParse(req.body);
 
   if (!parsed.success) {
-    res.status(400).json({ error: "Invalid email or password" });
+    res.status(400).json({ status: "error", message: "Invalid email or password" });
     return;
   }
 
@@ -17,7 +17,7 @@ const signupController = async (req: Request, res: Response) => {
   const existing = await prisma.user.findUnique({ where: { email } });
 
   if (existing) {
-    res.status(409).json({ error: "Email already registered" });
+    res.status(409).json({ status: "error", message: "Email already registered" });
     return;
   }
 
@@ -29,7 +29,11 @@ const signupController = async (req: Request, res: Response) => {
 
   setSessionCookie(res, token);
 
-  res.status(201).json({ id: user.id, email: user.email });
+  res.status(201).json({
+    status: "success",
+    message: "Signup Successful",
+    data: { id: user.id, email: user.email },
+  });
 };
 
 export default signupController;
