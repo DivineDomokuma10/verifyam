@@ -12,6 +12,7 @@ import { useLoginMutation, useSignupMutation } from "@/hook/queries/auth";
 import AuthStore from "@/store/auth";
 import SessionStore from "@/store/session";
 import type { IUserResponse } from "@/interface";
+import { getMutationError } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -36,18 +37,6 @@ function getNextPath(): string {
   return value && value.startsWith("/") && !value.startsWith("//")
     ? value
     : "/verify";
-}
-
-function getMutationError(error: unknown): string {
-  if (
-    typeof error === "object" &&
-    error !== null &&
-    "message" in error &&
-    typeof error.message === "string"
-  ) {
-    return error.message;
-  }
-  return "Something went wrong. Please try again.";
 }
 
 export function AuthForm({ mode }: AuthFormProps) {
