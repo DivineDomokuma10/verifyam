@@ -1,3 +1,5 @@
+import { IVerificationResultChecks } from "@/interface";
+
 export type THttpMethod = "GET" | "POST";
 
 export type TResponseType = "json" | "blob";
@@ -16,3 +18,8 @@ export type TApiError = {
   message: string;
   status: "error";
 };
+
+export type CheckField = Exclude<
+  keyof IVerificationResultChecks,
+  "scamSignals" | "notes"
+>;
