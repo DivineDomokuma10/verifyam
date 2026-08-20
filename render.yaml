@@ -1,0 +1,40 @@
+# Render blueprint for the VERIFY API server.
+# Create a new service from this repo (Blueprint) or paste this file.
+# Client lives on Vercel (Root Directory: "client") — not managed here.
+services:
+  - type: web
+    name: verify-api
+    runtime: node
+    plan: free
+    autoDeploy: true
+    healthCheckPath: /api/health
+    buildCommand: pnpm install --frozen-lockfile && pnpm --filter @verify/server prisma:generate:prod
+    startCommand: pnpm --filter @verify/server prisma:migrate:prod && pnpm --filter @verify/server start
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NODE_ENV
+        value: production
+      # Comma-separated client origin(s). Set to your Vercel app URL.
+      - key: CORS_ORIGINS
+        value: https://your-client.vercel.app
+      - key: COOKIE_NAME
+        value: verify_session
+      # Keep mock calls on first deploy; flip false + add CALLE_API_KEY when live.
+      - key: CALLE_MOCK
+        value: "true"
+      - key: CALLE_REGION
+        value: NG
+      - key: CALLE_LOCALE
+        value: en-NG
+      - key: DEFAULT_PHONE_REGION
+        value: NG
+      # Set these in the Render dashboard after creation:
+      - key: DATABASE_URL
+        sync: false
+      - key: CALLE_API_KEY
+        sync: false
+      # Public URL of this service, e.g. https://verify-api.onrender.com/api/webhooks/calle
+      # Required only when CALLE_MOCK=false.
+      - key: CALLE_WEBHOOK_URL
+        sync: false

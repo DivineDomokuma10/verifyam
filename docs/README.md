@@ -23,6 +23,10 @@ start-up/verify/
 
 Root pnpm workspace (`pnpm-workspace.yaml`) spans `client` + `server`.
 
+## Current status (2026-08-20)
+
+Core product is built and runnable end-to-end: auth, listing parse + manual submit, verification flow against CALL-E (mock mode by default, `CALLE_MOCK=true`), verdict engine with retries, and the full client flow (`/verify`, `/verify/[id]`, `/login`, `/signup`, `/dashboard`). **Deploy config is in place** — client on Vercel, server on Render (`render.yaml`), Postgres via a prod-only Prisma schema; see the "Deploy" section in [ARCHITECTURE.md](./ARCHITECTURE.md). Remaining: flipping CALL-E to real calls, future-phase features (email, landlord badge, report-scam), and post-deploy smoke tests.
+
 ## Docs index
 
 - [ARCHITECTURE.md](./ARCHITECTURE.md) — full system architecture, data model, API surface, CALL-E integration, phased build order

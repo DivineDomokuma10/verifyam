@@ -2,6 +2,77 @@
 
 Record of product and technical decisions made during planning. Newest first.
 
+## Deploy: Vercel (client) + Render (server), single monorepo — 2026-08-20
+
+- **Decision:** Client on **Vercel** (Root Directory `client`), server as a Node web service on **Render** via `render.yaml`. Both deploy from the **same repo** (pnpm workspace); Vercel and Render each build their package from the shared lockfile.
+- **Rationale:** Vercel is the native Next.js host with zero config; Render runs the Express service simply (build → `prisma migrate deploy` → `tsx` start). One repo avoids duplicated CI and API/client version drift.
+- **Effects:** No `vercel.json` needed (auto-detect; root dir set in dashboard). `render.yaml` pins Node 22, runs `prisma:generate:prod` at build and `prisma:migrate:prod && start` at boot, health-checked on `/api/health`.
+
+## Cross-site session cookie: SameSite=None + Secure in prod — 2026-08-20
+
+- **Decision:** `setSessionCookie` sets `sameSite: "none"` and `secure: true` when `NODE_ENV=production` (kept `lax`/insecure on localhost). CORS stays exact-origin (`CORS_ORIGINS`), `credentials: true`.
+- **Rationale:** Vercel (`*.vercel.app`) and Render (`*.onrender.com`) are different registrable domains — `SameSite=Lax` cookies are never sent on cross-site XHR, so auth would silently break. `SameSite=None` requires `Secure` (HTTPS), which both platforms provide.
+
+## Dual Prisma schema: SQLite dev, Postgres prod — 2026-08-20
+
+- **Decision:** Keep SQLite for local dev and Postgres for prod via **two schema files** (`server/prisma/schema.sqlite.prisma` dev, `server/prisma/postgresql/schema.prisma` prod), each with its own `migrations/` directory and `prisma:*` scripts (`prisma:generate`/`prisma:migrate` vs `prisma:generate:prod`/`prisma:migrate:prod`).
+- **Rationale:** Prisma fixes one provider per schema and derives the migrations dir from the schema location, so per-environment schemas are the low-drift way to keep dev DB-free. Field types stay identical (`Float`, JSON-as-`String`) so the two schemas never diverge; `Decimal`/`Json` promotion is a later cleanup.
+- **Effect:** The generated Prisma client is provider-specific — each environment generates its own (dev generates SQLite, Render generates Postgres at build). Initial Postgres migration was produced with `prisma migrate diff --from-empty`.
+
+## Prod runtime: tsx (no bundler) — 2026-08-20
+
+- **Decision:** Run the production server with `tsx src/index.ts` (existing `start` script), no esbuild/tsc build step.
+- **Rationale:** `tsx` handles TypeScript and the `@/*` path aliases natively, is already a dependency, and avoids bundler friction with Prisma. Accepted for a startup-scale API; can move to a bundled build if runtime overhead ever matters.
+
+## Deploy with CALL-E mock first — 2026-08-20
+
+- **Decision:** First deploy keeps `CALLE_MOCK=true` so the full live stack (auth → parse → verification → webhook → report) can be smoke-tested without spending CALL-E credits or needing a supported region. Flip to real calls via env vars (`CALLE_MOCK=false`, `CALLE_API_KEY`, `CALLE_WEBHOOK_URL`, supported `CALLE_REGION`) when ready.
+
+## Client data layer: axios wrapper + React Query + zustand — 2026-08-19
+
+- **Decision:** Replace the planned `lib/api.ts` fetch wrapper with `utils/call-api/` (axios instance, `withCredentials`, env base URL, request/response interceptors), typed endpoint classes in `api/`, React Query hooks in `hook/queries/`, and zustand stores for session/auth.
+- **Rationale:** Centralizes auth handling (401 interceptor), simplifies loading/error states via React Query, and keeps session state reactive across components. Supersedes the "add `lib/api.ts`" note in earlier docs.
+
+## Client route guarding: client-side `ProtectRoutes` — 2026-08-19
+
+- **Decision:** A root-level `ProtectRoutes` component checks the session on load and redirects unauthenticated users to `/login?next=<path>`; authenticated users hitting `/login`/`/signup` are bounced to `/dashboard`. Only `/` is public (plus auth pages).
+- **Rationale:** No server-side auth pages needed for v1; keeps the auth gate simple and works with the session cookie.
+
+## URL parsing via cheerio (OG + JSON-LD), not Playwright — 2026-08-19
+
+- **Decision:** Generic server-side scraper using `cheerio`: Open Graph tags for title/description/image, JSON-LD extraction for address/price, and title heuristics for a suggested address. Manual form is the fallback when parsing fails.
+- **Rationale:** Works across any site without per-domain Playwright setups; no browser process on the server. Playwright per-domain scraping remains a future enhancement for sites that block fetching.
+
+## CALL-E async create + webhook (not createAndWait) — 2026-08-19
+
+- **Decision:** Create calls asynchronously with `client.calls.create(...)` + `webhookUrl` + `metadata: { verificationId, attempt }` + idempotency key; terminal results arrive at `POST /api/webhooks/calle`.
+- **Rationale:** Matches the 24h turnaround model (no request held open) and lets the mock provider replay webhooks locally. `createAndWait` only fits a synchronous path we don't need.
+
+## Local mock CALL-E provider — 2026-08-19
+
+- **Decision:** `CALLE_MOCK=true` (default) uses a `MockCalleProvider` that fires the terminal webhook locally after a delay, with switchable scenarios: `verified`, `warning`, `inconclusive`, `no_answer`, `no_answer_then_verified`.
+- **Rationale:** Zero-cost local dev without an API key or real phone calls; scenarios exercise every verdict + retry path. Flip `CALLE_MOCK=false` for real calls.
+
+## Retry logic: hybrid rule, MAX_ATTEMPTS = 2 — 2026-08-19
+
+- **Decision:** Retry only on transient failure — no usable conversation (failed call / empty transcript) or `completionConfidence.score < 0.5`. If the recipient answered but couldn't confirm, finalize as inconclusive instead of retrying. Max 2 attempts total.
+- **Rationale:** Avoids burning a second call when it can't change the outcome; keeps the 24h turnaround honest.
+
+## Webhook verification: event-id header + dedup table — 2026-08-19
+
+- **Decision:** `POST /api/webhooks/calle` validates the `CALL-E-Event-Id` header against the body `id` and records seen events in a `WebhookEvent` table to dedupe replays. Supersedes the earlier "shared internal token" idea.
+- **Rationale:** Event-id matching + idempotent processing is the provider-native pattern; the dedup table makes retries safe.
+
+## Phone normalization via libphonenumber-js — 2026-08-19
+
+- **Decision:** Agent phones are normalized to E.164 at submission (`phone.service.ts`) using `libphonenumber-js` with `DEFAULT_PHONE_REGION` (default `NG`).
+- **Rationale:** Ensures the CALL-E provider gets a dialable number and rejects bad input at the API boundary.
+
+## API shape: /api prefix, GET logout — 2026-08-19
+
+- **Decision:** All backend routes are mounted under `/api/*` (`/api/auth`, `/api/verifications`, `/api/webhooks`, `/api/health`); logout is a `GET /api/auth/logout`. Responses use `{ status, message, data }`.
+- **Rationale:** Clean separation from the client origin on deploy; consistent envelope makes the client wrapper trivial.
+
 ## SQLite for dev, Postgres for prod — 2026-08-14
 
 - **Decision:** Dev uses SQLite; switch to PostgreSQL when production is ready.
