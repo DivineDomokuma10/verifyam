@@ -7,6 +7,7 @@ export const parseListingSchema = z.object({
 export const createVerificationSchema = z.object({
   source: z.enum(["url", "manual"]),
   listingUrl: z.string().url().optional(),
+  listingContext: z.string().optional(),
   address: z.string().min(1, "Address is required"),
   price: z.coerce.number().positive().optional(),
   agentName: z.string().trim().optional(),

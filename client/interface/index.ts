@@ -49,4 +49,6 @@ export interface IListingPreview {
   title: string | null;
   description: string | null;
   image: string | null;
+  address: string | null;
+  price: number | null;
 }
