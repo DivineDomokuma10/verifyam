@@ -242,7 +242,7 @@ Verdict logic (does **not** require all fields `yes` — honest "I don't know" o
 
 ## Open items (non-blockers)
 
-- **CALL-E region:** Nigeria is "International" (test-only until a local line is enabled). US/SG/MY/IN/AE/AU are local-ready. Defaults are `CALLE_REGION=NG` / `CALLE_LOCALE=en-NG` and mock mode is on — flip to real calls once a supported region/API key is in place.
+- **CALL-E region:** Nigeria (`NG`) **is supported** but routes via CALL-E **international lines** — primarily intended for testing; for production-grade local calls, contact CALL-E to enable a local line or set `CALLE_REGION` to a local-line country (US/SG/MY/IN/AE/AU/MX/BR). Real calls work today with `CALLE_MOCK=false` + API key. See [DEPLOYMENT.md](./DEPLOYMENT.md) for the flip, and [HACKATHON.md](./HACKATHON.md) for the submission checklist.
 - **Email deferred** — account notifications are on-page + dashboard only in v1.
 - **URL parsing:** implemented as a generic cheerio scraper (Open Graph + JSON-LD + title heuristics) with manual fallback — works across sites without per-domain Playwright setups. Known-domain hardening can come later.
 - **Post-deploy checks:** verify cookie flow on the real domain, add preview-branch client origins to `CORS_ORIGINS` as needed, and consider promoting `price` to `Decimal`/`structuredResult` to `Json` on Postgres once types matter.

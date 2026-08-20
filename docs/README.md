@@ -32,3 +32,5 @@ Core product is built and runnable end-to-end: auth, listing parse + manual subm
 - [ARCHITECTURE.md](./ARCHITECTURE.md) — full system architecture, data model, API surface, CALL-E integration, phased build order
 - [USER_FLOW.md](./USER_FLOW.md) — end-to-end user journey
 - [DECISIONS.md](./DECISIONS.md) — recorded product/technical decisions with rationale
+- [DEPLOYMENT.md](./DEPLOYMENT.md) — Render + Vercel deploy runbook (incl. flipping CALL-E to real calls)
+- [HACKATHON.md](./HACKATHON.md) — CALL-E hackathon submission checklist, judging alignment, PR draft
