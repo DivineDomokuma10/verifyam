@@ -73,19 +73,55 @@ export function buildTask(verification: Verification): string {
     ? ` (${verification.agentName})`
     : "";
 
+  const context = parseListingContext(verification.listingContext);
+
+  const listingDetails = context
+    ? `\n\nThe listing to verify against describes the property as follows: ${context}`
+    : "\n\nNo written listing details were provided, so ask the contact to describe the unit and check the answers for consistency.";
+
   return `Task: Call ${verification.agentPhone}${agent} on behalf of a prospective renter to verify the listing for ${verification.address}${price}.
 
-Goal: Confirm whether the listing is real, still available, correctly priced, accurately described (photos/size/amenities), and whether any scam signals are present.
+Goal: Confirm whether the listing is real, still available, correctly priced, accurately described (photos/size/amenities), and whether any scam signals are present.${listingDetails}
 
 Rules:
 - Open by identifying yourself as an independent listing-verification service calling on behalf of a prospective renter.
 - Be polite, concise, and neutral — do not negotiate or sell.
 - If there's no answer, hang up and retry once. If still no answer, mark the relevant fields "unknown". Never guess or invent answers.
 - If the contact refuses to answer a question, mark it "unknown", not "no".
+- Compare the contact's answers with the listing details above. If the contact states something that clearly contradicts the listing (wrong price, wrong size, missing amenities), mark the matching field "no".
 - Fill every field of the result schema strictly from what was actually said in the conversation.
 
 Return only the JSON result matching the provided schema.`;
 }
+
+const parseListingContext = (raw: string | null): string | null => {
+  if (!raw) return null;
+
+  try {
+    const parsed = JSON.parse(raw) as {
+      title?: unknown;
+      description?: unknown;
+    };
+
+    const title =
+      typeof parsed.title === "string"
+        ? parsed.title
+            .replace(/\s*\|\s*[^|]+$/, "")
+            .replace(/\s+[-–—]\s+[^-–—]+$/, "")
+            .trim()
+        : "";
+
+    const parts = [title, parsed.description]
+      .filter((value): value is string => typeof value === "string" && value.trim() !== "")
+      .map((value) => value.trim());
+
+    if (parts.length === 0) return null;
+
+    return parts.join(" — ");
+  } catch {
+    return null;
+  }
+};
 
 export function buildCallInput(verification: Verification, attempt: number): CalleCallInput {
   return {
@@ -148,11 +184,11 @@ const toIso = (offsetSeconds: number): string =>
 function mockRecipientScenario(scenario: MockScenario, attempt: number) {
   const secondAttempt = attempt >= 2;
 
-  if (scenario === "no_answer_then_verified" && !secondAttempt) {
+  if (scenario === "no_answer") {
     return { type: "failed" as const };
   }
 
-  if (scenario === "no_answer" && !secondAttempt) {
+  if (scenario === "no_answer_then_verified" && !secondAttempt) {
     return { type: "failed" as const };
   }
 

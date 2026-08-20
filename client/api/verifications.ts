@@ -10,6 +10,7 @@ import {
 export interface TVerifyListingPayload {
   source: "url" | "manual";
   listingUrl?: string;
+  listingContext?: string;
   address: string;
   price?: number;
   agentName?: string;

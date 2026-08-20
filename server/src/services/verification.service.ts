@@ -20,6 +20,7 @@ import {
 export interface CreateVerificationInput {
   source: "url" | "manual";
   listingUrl?: string;
+  listingContext?: string;
   address: string;
   price?: number;
   agentName?: string;
@@ -150,6 +151,7 @@ export async function createVerification(
       userId,
       source: input.source,
       listingUrl: input.listingUrl,
+      listingContext: input.listingContext ?? null,
       address: input.address,
       price: input.price,
       agentName: input.agentName,

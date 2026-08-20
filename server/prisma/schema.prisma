@@ -38,6 +38,7 @@ model Verification {
   user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   source           String    // "url" | "manual"
   listingUrl       String?
+  listingContext   String?   // JSON text: parsed listing { title, description }
   address          String
   price            Float?    // SQLite: Decimal unsupported; promote on Postgres
   agentName        String?

@@ -42,3 +42,15 @@ export const FIELD_STYLES = {
   no: "text-destructive",
   unknown: "text-muted-foreground",
 } as const;
+
+export const STATUS_LABELS = {
+  pending: "Queued",
+  calling: "In progress",
+  completed: "Completed",
+} as const;
+
+export const RESULT_STYLES = {
+  verified: "text-emerald-600 dark:text-emerald-400",
+  warning: "text-amber-600 dark:text-amber-400",
+  inconclusive: "text-muted-foreground",
+} as const;
