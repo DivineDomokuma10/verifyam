@@ -16,14 +16,15 @@ Every verification requires an account. There is no anonymous verification path.
 - Secondary CTAs ("Get your listings verified", header CTA) also route to `/verify` for v1.
 
 ### 2. Auth gate
-- `/verify` requires a session.
-- Not signed in → redirected to `/login` (with `?next=/verify`).
-- `/signup` → creates account → auto-login → continue to `/verify`.
+- `/verify`, `/verify/[id]`, `/dashboard` require a session.
+- `ProtectRoutes` (client-side, root layout) checks the session and redirects not-signed-in users to `/login?next=<path>`.
+- `/signup` → creates account → auto-login → continues to the original destination (`/verify` via the CTA).
+- Signed-in users hitting `/login`/`/signup` are redirected to `/dashboard`.
 
 ### 3. Submit the listing
-- **URL path:** paste a listing URL → backend parses → **preview card** (photo, price, address, agent/landlord) → user confirms "yes, this is it".
-- **Manual fallback path:** when URL parse fails or the user prefers, a form collects: address, asking price, agent/landlord name, agent/landlord phone.
-- On submit, a `Verification` is created with `status = pending`.
+- **URL path:** paste a listing URL → `POST /api/verifications/parse` (cheerio scraper) → **preview card** (photo, price, address, title/description) → user confirms "yes, this is it".
+- **Manual fallback path:** when URL parse fails or the user prefers, a form collects: address, asking price, agent/landlord name, agent/landlord phone (phone normalized to E.164).
+- On submit, a `Verification` is created with `status = pending`, then a CALL-E call is created and status flips to `calling`.
 
 ### 4. Verification runs (24h standard)
 - Background task creates a CALL-E call against the agent/landlord phone.
@@ -50,8 +51,9 @@ Every verification requires an account. There is no anonymous verification path.
 | calling   | CALL-E call in progress / retrying       |
 | completed | Verdict produced (verified/warning/inconclusive) |
 
-## Wire-up changes on the client
+## Wire-up changes on the client — done
 
-- Replace anchor CTAs pointing at `#verify` with real routes (`/verify`, `/login`, `/signup`, `/dashboard`).
-- Add `lib/api.ts` fetch wrapper using `credentials: "include"` for session cookies.
-- Add the four new pages: `/verify`, `/verify/[id]`, `/login`, `/signup`, `/dashboard`.
+- Landing CTAs route to `/verify`, `/login`, `/signup`, `/dashboard` (hero, header, final CTA; section anchors remain for in-page nav).
+- `utils/call-api/` axios wrapper (`withCredentials`) + `api/` endpoint classes + React Query hooks.
+- Route guarding via `ProtectRoutes` (session → `/login?next=...`).
+- The four new pages exist: `/verify`, `/verify/[id]`, `/login`, `/signup`, `/dashboard`.

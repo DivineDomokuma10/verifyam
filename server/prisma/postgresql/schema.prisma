@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String         @id @default(cuid())
+  email        String         @unique
+  passwordHash String
+  sessions     Session[]
+  verifications Verification[]
+  createdAt    DateTime       @default(now())
+}
+
+model Session {
+  token     String   @id
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model WebhookEvent {
+  id        String   @id
+  type      String
+  createdAt DateTime @default(now())
+}
+
+model Verification {
+  id               String    @id @default(cuid())
+  userId           String
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  source           String    // "url" | "manual"
+  listingUrl       String?
+  listingContext   String?   // JSON text: parsed listing { title, description }
+  address          String
+  price            Float?
+  agentName        String?
+  agentPhone       String
+  status           String    // "pending" | "calling" | "completed"
+  result           String?   // "verified" | "warning" | "inconclusive"
+  confidence       Float?
+  calleCallId      String?
+  structuredResult String?   // JSON text: { verdict, confidence, checks, summary, evidence, transcript }
+  attempt          Int        @default(1)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@index([userId])
+}
