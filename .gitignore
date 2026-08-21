@@ -15,3 +15,8 @@ out
 # misc
 .DS_Store
 *.tsbuildinfo
+
+# intentionally not tracked (hackathon docs covered in DEPLOYMENT/ARCHITECTURE/HACKATHON/README)
+docs/DECISIONS.md
+docs/USER_FLOW.md
+client/CONTENT.md
