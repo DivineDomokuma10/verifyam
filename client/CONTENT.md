@@ -25,11 +25,6 @@ Body: Photos can be stolen, apartments can be rented already, and "available" of
 - Catch scams before they catch your deposit.
 - Walk in knowing the price, photos, and availability are real.
 - CTA: Verify a listing free
-  For landlords / agents
-- Back your listings with a Verified badge no one else offers.
-- Answer "is this real?" once — with a third-party check.
-- Reduce time-wasters and dead leads from stale listings.
-- CTA: Get your listings verified
 
 6. FAQ
 

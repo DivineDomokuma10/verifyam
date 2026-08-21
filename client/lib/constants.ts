@@ -72,17 +72,6 @@ export const AUDIENCES = [
     cta: "Verify a listing free",
     href: "#verify",
   },
-  {
-    id: "for-agents",
-    heading: "For landlords / agents",
-    points: [
-      "Back your listings with a Verified badge no one else offers.",
-      "Answer \"is this real?\" once — with a third-party check.",
-      "Reduce time-wasters and dead leads from stale listings.",
-    ],
-    cta: "Get your listings verified",
-    href: "#verify",
-  },
 ];
 
 export const FAQS = [
