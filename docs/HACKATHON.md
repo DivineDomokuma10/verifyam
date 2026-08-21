@@ -56,7 +56,7 @@ Also open the repo on GitHub → Settings → Pages or leave it (the README entr
 2. In `README.md`, under **### Apps**, add one bullet (keep the [template](https://github.com/CALLE-AI/awesome-phone-call-agents/blob/main/README.md) — short, specific, workflow-tied):
 
 ```markdown
-- [VERIFY](https://github.com/<YOUR_GITHUB>/verify) - Disclosed listing-verification app that calls the agent or landlord behind a rental ad and returns a schema-validated Verified/Warning/Inconclusive verdict with transcript evidence and an optional mock mode.
+- [VERIFY](https://github.com/<YOUR_GITHUB>/verify) - Calls the agent/landlord behind a rental listing and returns a transcript-backed verdict (Verified/Warning/Inconclusive) with schema validation and optional mock mode.
 ```
 
 3. Run the repo's validator before opening the PR (from a Python 3 env):
