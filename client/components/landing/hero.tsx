@@ -7,7 +7,7 @@ const Hero = () => {
     <section className="flex w-full flex-col items-center gap-6 py-20 text-center md:py-28">
       <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-medium tracking-wide text-primary uppercase">
         <RiCheckDoubleFill className="size-3.5" />
-        Verified apartment listings
+        Transcript-backed apartment listings
       </span>
 
       <h1 className="font-heading max-w-3xl text-4xl leading-tight font-bold text-balance md:text-6xl">

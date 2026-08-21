@@ -1,4 +1,4 @@
-Eyebrow: Verified apartment listings
+Eyebrow: Transcript-backed apartment listings
 Headline: Don't just find it. Verify it.
 Subhead: We call the agent or landlord behind every listing and confirm it's real, available, and accurate — before you waste a tour or a deposit.
 Primary CTA: Verify a listing · Secondary CTA: See how it works
