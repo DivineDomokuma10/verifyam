@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { Logo } from "./utils";
 import ThemeToggle from "./theme-toggle";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -65,7 +67,7 @@ const Header = () => {
         <Button
           size="sm"
           nativeButton={false}
-          render={<a href="/verify" />}
+          render={<Link href="/verify" />}
           className="hidden sm:inline-flex"
         >
           Verify a listing

@@ -2,7 +2,7 @@ import "dotenv/config";
 import { z } from "zod";
 
 const envSchema = z.object({
-  DATABASE_URL: z.string().min(1),
+  DATABASE_URL: z.string().min(1).default("file:./dev.db"),
   PORT: z.coerce.number().default(4000),
   SESSION_TTL_DAYS: z.coerce.number().default(30),
   COOKIE_NAME: z.string().default("verify_session"),
