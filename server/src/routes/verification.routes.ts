@@ -6,7 +6,7 @@ import {
   listVerificationsController,
   parseListingController,
 } from "@/controller/verification";
-import { requireAuth } from "@/middleware";
+import { requireAuth, createVerificationRateLimit } from "@/middleware";
 
 const router = Router();
 
@@ -14,7 +14,7 @@ router.use(requireAuth);
 
 router.post("/parse", parseListingController);
 
-router.post("/", createVerificationController);
+router.post("/", createVerificationRateLimit, createVerificationController);
 
 router.get("/", listVerificationsController);
 

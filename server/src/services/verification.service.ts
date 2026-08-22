@@ -48,16 +48,25 @@ const getProvider = (): CalleProvider => {
 const findVerification = async (
   event: WebhookEvent,
 ): Promise<Verification | null> => {
+  // Primary path: the event must reference a call ID this server created.
   const byCallId = await prisma.verification.findFirst({
     where: { calleCallId: event.data.id },
   });
 
   if (byCallId) return byCallId;
 
+  // Fallback: metadata binding is only trusted before the provider call
+  // exists (calleCallId still null). Once set, an event whose id does not
+  // match the stored call id is rejected — forged events cannot finalize
+  // a verification by guessing the verificationId alone.
   const verificationId = event.data.metadata?.verificationId;
 
   if (typeof verificationId === "string") {
-    return prisma.verification.findUnique({ where: { id: verificationId } });
+    const verification = await prisma.verification.findUnique({
+      where: { id: verificationId },
+    });
+
+    if (verification && !verification.calleCallId) return verification;
   }
 
   return null;

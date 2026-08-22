@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 
+import { env } from "@/config";
 import { prisma } from "@/lib";
 
 export async function verifyWebhook(
@@ -19,6 +20,15 @@ export async function verifyWebhook(
   if (!eventIdHeader || eventIdHeader !== body.id) {
     res.status(400).json({ status: "error", message: "invalid event id" });
     return;
+  }
+
+  if (env.CALLE_WEBHOOK_SECRET) {
+    const signature = req.get("CALL-E-Signature");
+
+    if (signature !== env.CALLE_WEBHOOK_SECRET) {
+      res.status(401).json({ status: "error", message: "invalid signature" });
+      return;
+    }
   }
 
   const alreadySeen = await prisma.webhookEvent.findUnique({
