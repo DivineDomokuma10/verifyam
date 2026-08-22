@@ -9,7 +9,7 @@ A property verification platform. Users paste a listing link (Zillow, Apartments
 - **AI is a tool, not the message** — the public copy centers on the verification outcome, not the technology.
 - **Dual audience:** renters (verify a listing free) and landlords/agents (get a Verified badge, reduce stale leads).
 - **Monetization:** free for renters; landlord badge is a future phase.
-- **Turnaround:** 24-hour standard. Phone calls only — **no SMS follow-up**.
+- **Turnaround:** typically minutes per listing. Phone calls only — **no SMS follow-up**.
 - **CALL-E** (`@call-e/calle` SDK) is the AI phone-call provider.
 
 ## Repo layout
