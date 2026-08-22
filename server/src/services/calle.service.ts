@@ -94,7 +94,7 @@ Rules:
 Return only the JSON result matching the provided schema.`;
 }
 
-const parseListingContext = (raw: string | null): string | null => {
+export const parseListingContext = (raw: string | null): string | null => {
   if (!raw) return null;
 
   try {
