@@ -26,7 +26,7 @@ Every verification requires an account. There is no anonymous verification path.
 - **Manual fallback path:** when URL parse fails or the user prefers, a form collects: address, asking price, agent/landlord name, agent/landlord phone (phone normalized to E.164).
 - On submit, a `Verification` is created with `status = pending`, then a CALL-E call is created and status flips to `calling`.
 
-### 4. Verification runs (24h standard)
+### 4. Verification runs (typically minutes)
 - Background task creates a CALL-E call against the agent/landlord phone.
 - CALL-E plans, dials, holds a live conversation, and returns a structured result.
 - **Phone calls only — no SMS follow-up.** No-answer triggers retry logic.

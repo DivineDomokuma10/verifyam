@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# VERIFY — Client
 
-## Getting Started
+Next.js 16 frontend (App Router, React 19, Tailwind v4, shadcn/ui) for the
+VERIFY property-listing verification platform.
 
-First, run the development server:
+## Setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# from the repo root (pnpm workspace)
+pnpm install
+
+# environment
+cp .env.example .env.local   # then set NEXT_PUBLIC_BACKEND_URL
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Variable | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_BACKEND_URL` | Base URL of the API server (e.g. `http://localhost:4000`) |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Run
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+pnpm dev        # from repo root, or: pnpm --filter @verify/client dev
+```
 
-## Learn More
+Open http://localhost:3000. Routes: `/` landing, `/signup`, `/login`,
+`/verify` (submit a listing), `/verify/[id]` (live status + report),
+`/dashboard` (history).
 
-To learn more about Next.js, take a look at the following resources:
+## Notes
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- The API server lives in [`../server`](../server) — see its README for the
+  CALL-E integration, mock mode (`CALLE_MOCK=true`), and credential handling.
+- Architecture and deployment docs are in [`../docs`](../docs).
+- Verdicts shown in reports are transcript-backed assessments of the call —
+  not independent verification of a listing or a landlord's authority.

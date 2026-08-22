@@ -46,7 +46,7 @@ Record of product and technical decisions made during planning. Newest first.
 ## CALL-E async create + webhook (not createAndWait) — 2026-08-19
 
 - **Decision:** Create calls asynchronously with `client.calls.create(...)` + `webhookUrl` + `metadata: { verificationId, attempt }` + idempotency key; terminal results arrive at `POST /api/webhooks/calle`.
-- **Rationale:** Matches the 24h turnaround model (no request held open) and lets the mock provider replay webhooks locally. `createAndWait` only fits a synchronous path we don't need.
+- **Rationale:** Matches the async model (no request held open) and lets the mock provider replay webhooks locally. `createAndWait` only fits a synchronous path we don't need.
 
 ## Local mock CALL-E provider — 2026-08-19
 
@@ -56,7 +56,7 @@ Record of product and technical decisions made during planning. Newest first.
 ## Retry logic: hybrid rule, MAX_ATTEMPTS = 2 — 2026-08-19
 
 - **Decision:** Retry only on transient failure — no usable conversation (failed call / empty transcript) or `completionConfidence.score < 0.5`. If the recipient answered but couldn't confirm, finalize as inconclusive instead of retrying. Max 2 attempts total.
-- **Rationale:** Avoids burning a second call when it can't change the outcome; keeps the 24h turnaround honest.
+- **Rationale:** Avoids burning a second call when it can't change the outcome; keeps results fast and call spend low.
 
 ## Webhook verification: event-id header + dedup table — 2026-08-19
 
@@ -83,7 +83,7 @@ Record of product and technical decisions made during planning. Newest first.
 
 - **Decision:** Granular 7-check result schema (`isReal`, `isAvailable`, `priceMatches`, `photosAccurate`, `sizeMatches`, `amenitiesMatch`, `moveInDateConfirmed`) + `scamSignals` array and `notes`. Task prompt uses **goal + outcomes + no-answer rule** style.
 - **Rationale:** Maps 1:1 to the six "What we verify" cards (real / available / accurate / not-a-scam) and the report fields. The no-answer rule ("mark `unknown`, never guess") prevents fabricated `no` answers and guarantees clean JSON.
-- **Verdict guard:** `Verified` requires only `isReal`, `isAvailable`, `priceMatches` = `yes` and no scam signals — honest "I don't know" on secondary fields (photos/size/amenities/move-in) must not fail a listing or blow the 24h turnaround.
+- **Verdict guard:** `Verified` requires only `isReal`, `isAvailable`, `priceMatches` = `yes` and no scam signals — honest "I don't know" on secondary fields (photos/size/amenities/move-in) must not fail a listing. Verdicts are transcript-supported assessments of the call, not independent authority verification.
 - **Prompt style rejected:** minimal single sentence (no no-answer handling, ambiguous schema mapping) and fully scripted dialogue (brittle against real conversations, doesn't fit CALL-E's goal-driven model).
 
 ## Accounts-only (no anonymous verification) — 2026-08-14
@@ -125,9 +125,10 @@ Record of product and technical decisions made during planning. Newest first.
 
 - **Decision:** Verification is free; renters are the paying focus for conversion. Landlord badge monetization is a future phase.
 
-## 24h standard turnaround only — 2026-08-14
+## Minutes-fast turnaround only — 2026-08-22
 
-- **Decision:** Single 24-hour turnaround tier. No paid urgent tier in v1.
+- **Decision:** Single fast-turnaround tier (typically minutes). No paid urgent tier in v1.
+- **Update (2026-08-22):** replaced the original 24-hour standard — calls in practice complete in seconds to minutes, so the earlier claim understated the product.
 
 ## AI is a tool, not the message — 2026-08-14
 

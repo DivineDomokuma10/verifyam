@@ -104,10 +104,19 @@ When you have your CALL-E API key and credits (20 free on signup):
    - Confirm the webhook was accepted (server logs; the `WebhookEvent` dedup row).
 
 Webhook notes (verified against CALL-E docs):
-- Deliveries are **unsigned** — no secret/signature headers.
+- Deliveries are **unsigned** — no secret/signature headers. If CALL-E adds one,
+  set `CALLE_WEBHOOK_SECRET` and the server will require a matching
+  `CALL-E-Signature` header on every delivery.
+- Defense against forged events: terminal events are only processed when the
+  event `id` matches the server-generated `calleCallId` stored on the
+  verification (metadata binding is trusted only before the call exists).
 - Authentication is the **`CALL-E-Event-Id`** header, which must equal the body `id`;
   consumers dedupe at-least-once deliveries. Our `verifyWebhook` middleware implements
   exactly this and records events in the `WebhookEvent` table.
+
+Abuse controls:
+- `POST /api/verifications` is rate limited per user: hourly sliding window +
+  daily quota (in-memory; resets on restart — fine for single-instance deploys).
 
 ---
 
@@ -122,3 +131,5 @@ Webhook notes (verified against CALL-E docs):
 | `CALLE_API_KEY` | — | ✅ | real calls |
 | `CALLE_WEBHOOK_URL` | — | ✅ | real calls |
 | `CALLE_REGION` / `CALLE_LOCALE` / `DEFAULT_PHONE_REGION` | — | ✅ | as needed |
+| `CALLE_WEBHOOK_SECRET` | — | optional | signature check if CALL-E supports one |
+| `MAX_VERIFICATIONS_PER_HOUR` / `MAX_VERIFICATIONS_PER_DAY` | — | defaults 5 / 10 | abuse control |
