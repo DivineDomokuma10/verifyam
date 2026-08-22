@@ -125,6 +125,12 @@ export function DetailsForm({
       >
         {isSubmitting ? "Starting…" : "Verify this listing"}
       </Button>
+
+      <p className="text-xs text-pretty text-muted-foreground">
+        An AI voice agent will call this number and identify itself as an
+        automated verification service. Please only submit numbers you are
+        authorized to have contacted.
+      </p>
     </form>
   );
 }
