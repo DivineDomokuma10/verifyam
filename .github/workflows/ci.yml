@@ -21,6 +21,9 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      - name: Generate Prisma client
+        run: pnpm --filter @verify/server prisma:generate
+
       - name: Typecheck
         run: pnpm --filter @verify/server typecheck
 
@@ -41,6 +44,9 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
+
+      - name: Generate Next.js route types
+        run: pnpm --filter @verify/client exec next typegen
 
       - name: Typecheck
         run: pnpm --filter @verify/client typecheck
