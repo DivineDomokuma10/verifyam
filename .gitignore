@@ -16,6 +16,10 @@ out
 .DS_Store
 *.tsbuildinfo
 
+# local database (regenerate via prisma migrate)
+server/prisma/dev.db
+*.db
+
 # intentionally not tracked (hackathon docs covered in DEPLOYMENT/ARCHITECTURE/HACKATHON/README)
 docs/DECISIONS.md
 docs/USER_FLOW.md
