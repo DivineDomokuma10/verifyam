@@ -26,3 +26,24 @@ export const handleLogout = async () => {
   AuthStore.getState().clearAuthData?.();
   window.location.replace("/login");
 };
+
+export function formatRelativeTime(date: string | Date): string {
+  const seconds = Math.floor(
+    (Date.now() - new Date(date).getTime()) / 1000,
+  );
+
+  if (seconds < 60) return "just now";
+  if (seconds < 3600) {
+    const minutes = Math.floor(seconds / 60);
+    return `${minutes}m ago`;
+  }
+  if (seconds < 86400) {
+    const hours = Math.floor(seconds / 3600);
+    return `${hours}h ago`;
+  }
+  const days = Math.floor(seconds / 86400);
+  if (days === 1) return "yesterday";
+  if (days < 7) return `${days}d ago`;
+
+  return new Date(date).toLocaleDateString();
+}
