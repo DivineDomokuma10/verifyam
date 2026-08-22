@@ -25,7 +25,7 @@ export const CHECK_LABELS: Array<{ key: CheckField; label: string }> = [
 export const VERDICT_STYLES = {
   verified: {
     badge: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
-    label: "Verified (transcript-backed claim)",
+    label: "Verified",
   },
   warning: {
     badge: "bg-amber-500/15 text-amber-600 dark:text-amber-400",

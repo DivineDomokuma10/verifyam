@@ -51,7 +51,7 @@ export const STEPS = [
   {
     icon: RiPhoneLine,
     title: "We call to confirm",
-    body: "Our team reaches out to the agent or landlord, asks the hard questions, and checks the listing is real, available, and accurate.",
+    body: "An AI voice agent calls the agent or landlord, asks the hard questions, and checks the listing is real, available, and accurate. The call identifies itself as an automated verification service.",
   },
   {
     icon: RiFileCheckLine,
@@ -85,14 +85,14 @@ export const FAQS = [
   },
   {
     q: "How fast is it?",
-    a: "Most listings verified within 24 hours.",
+    a: "Most listings are verified within minutes of submitting.",
   },
   {
     q: "What if a verified listing turns out wrong?",
-    a: "Your report documents everything. If we got it wrong, we'll make it right.",
+    a: "Your report documents everything, including the full call transcript. It reflects what the contact said — it's not an independent guarantee.",
   },
   {
     q: "Who does the calling?",
-    a: "Our verification team reaches the agent or landlord directly, so you never play phone tag.",
+    a: "An AI voice agent calls the agent or landlord directly and identifies itself as an automated verification service, so you never play phone tag.",
   },
 ];

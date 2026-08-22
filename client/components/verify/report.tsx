@@ -75,6 +75,11 @@ export function Report({ verification }: Props) {
         <VerdictBadge result={verification.result ?? "inconclusive"} />
       </div>
 
+      <p className="text-xs text-muted-foreground">
+        Assessment based on the recorded call transcript — not an independent
+        verification of the listing or the contact&apos;s authority to rent it.
+      </p>
+
       {verification.price && (
         <p className="text-sm text-muted-foreground">
           Listed at{" "}

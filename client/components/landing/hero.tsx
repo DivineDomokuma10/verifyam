@@ -37,7 +37,7 @@ const Hero = () => {
       </div>
 
       <p className="text-sm text-muted-foreground">
-        Real checks. Real people. Answers within 24 hours.
+        Real checks. Real calls. Answers within minutes.
       </p>
     </section>
   );
