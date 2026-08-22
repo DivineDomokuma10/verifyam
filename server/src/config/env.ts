@@ -37,6 +37,9 @@ const envSchema = z.object({
   CALLE_REGION: z.string().default("NG"),
   CALLE_LOCALE: z.string().default("en-NG"),
   CALLE_WEBHOOK_URL: z.string().url().optional(),
+  CALLE_WEBHOOK_SECRET: z.string().optional(),
+  MAX_VERIFICATIONS_PER_HOUR: z.coerce.number().default(5),
+  MAX_VERIFICATIONS_PER_DAY: z.coerce.number().default(10),
   DEFAULT_PHONE_REGION: z.string().default("NG"),
 });
 
