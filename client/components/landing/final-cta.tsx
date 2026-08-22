@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { RiArrowRightLine, RiCheckDoubleFill } from "@remixicon/react";
 
 import { Button } from "@/components/ui/button";
@@ -23,7 +24,7 @@ const FinalCta = () => {
           size="lg"
           variant="secondary"
           nativeButton={false}
-          render={<a href="/verify" />}
+          render={<Link href="/verify" />}
           className="whitespace-normal"
         >
           Verify your first listing free
