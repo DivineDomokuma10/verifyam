@@ -2,28 +2,26 @@ import type { Request, Response } from "express";
 
 import { parseListingSchema } from "@/schema";
 import { ListingParseError, parseListingUrl } from "@/services";
+import { AppError, ok, parseOrThrow } from "@/utils";
 
 const parseListingController = async (req: Request, res: Response) => {
-  const parsed = parseListingSchema.safeParse(req.body);
-
-  if (!parsed.success) {
-    res.status(400).json({ status: "error", message: "Invalid URL" });
-    return;
-  }
+  const { url } = parseOrThrow(parseListingSchema, req.body, "Invalid URL");
 
   try {
-    const preview = await parseListingUrl(parsed.data.url);
+    const preview = await parseListingUrl(url);
 
-    res.json({
-      status: "success",
+    return ok(res, {
       message: "Listing parsed",
       data: preview,
     });
   } catch (error) {
-    const message =
-      error instanceof ListingParseError ? error.message : "Unable to read this listing URL";
+    if (error instanceof ListingParseError) {
+      throw AppError.unprocessable(error.message, { cause: error });
+    }
 
-    res.status(422).json({ status: "error", message });
+    throw AppError.unprocessable("Unable to read this listing URL", {
+      cause: error,
+    });
   }
 };
 

@@ -3,22 +3,19 @@ import type { Request, Response } from "express";
 import { createSession, hashPassword, setSessionCookie } from "@/services";
 import { prisma } from "@/lib";
 import { credentialsSchema } from "@/schema";
+import { AppError, ok, parseOrThrow } from "@/utils";
 
 const signupController = async (req: Request, res: Response) => {
-  const parsed = credentialsSchema.safeParse(req.body);
-
-  if (!parsed.success) {
-    res.status(400).json({ status: "error", message: "Invalid email or password" });
-    return;
-  }
-
-  const { email, password } = parsed.data;
+  const { email, password } = parseOrThrow(
+    credentialsSchema,
+    req.body,
+    "Invalid email or password",
+  );
 
   const existing = await prisma.user.findUnique({ where: { email } });
 
   if (existing) {
-    res.status(409).json({ status: "error", message: "Email already registered" });
-    return;
+    throw AppError.conflict("Email already registered");
   }
 
   const user = await prisma.user.create({
@@ -29,8 +26,8 @@ const signupController = async (req: Request, res: Response) => {
 
   setSessionCookie(res, token);
 
-  res.status(201).json({
-    status: "success",
+  return ok(res, {
+    status: 201,
     message: "Signup Successful",
     data: { id: user.id, email: user.email },
   });

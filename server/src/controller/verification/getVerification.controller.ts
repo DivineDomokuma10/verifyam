@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 
 import { prisma } from "@/lib";
+import { AppError, ok } from "@/utils";
 import { serializeVerification } from "./serialize";
 
 const getVerificationController = async (req: Request, res: Response) => {
@@ -9,12 +10,10 @@ const getVerificationController = async (req: Request, res: Response) => {
   });
 
   if (!verification) {
-    res.status(404).json({ status: "error", message: "Verification not found" });
-    return;
+    throw AppError.notFound("Verification not found");
   }
 
-  res.json({
-    status: "success",
+  return ok(res, {
     message: "Verification fetched",
     data: serializeVerification(verification),
   });

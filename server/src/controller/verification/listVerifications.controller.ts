@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 
 import { prisma } from "@/lib";
+import { ok } from "@/utils";
 import { serializeVerification } from "./serialize";
 
 const listVerificationsController = async (req: Request, res: Response) => {
@@ -9,8 +10,7 @@ const listVerificationsController = async (req: Request, res: Response) => {
     orderBy: { createdAt: "desc" },
   });
 
-  res.json({
-    status: "success",
+  return ok(res, {
     message: "Verifications fetched",
     data: verifications.map(serializeVerification),
   });

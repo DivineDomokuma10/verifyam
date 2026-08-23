@@ -11,7 +11,7 @@ function SkeletonCard() {
   return (
     <div
       aria-hidden
-      className="h-[104px] animate-pulse rounded-md border border-border bg-card"
+      className="h-26 animate-pulse rounded-md border border-border bg-card"
     />
   );
 }
@@ -31,7 +31,11 @@ export default function DashboardPage() {
           <div className="h-10 w-36 animate-pulse rounded-md bg-muted" />
         </div>
 
-        <div className="flex flex-col gap-4" aria-busy="true" aria-live="polite">
+        <div
+          className="flex flex-col gap-4"
+          aria-busy="true"
+          aria-live="polite"
+        >
           <span className="sr-only">Loading your verifications…</span>
           <SkeletonCard />
           <SkeletonCard />
@@ -54,7 +58,9 @@ export default function DashboardPage() {
 
   const verified = verifications.filter((v) => v.result === "verified").length;
   const warnings = verifications.filter((v) => v.result === "warning").length;
-  const inProgress = verifications.filter((v) => v.status !== "completed").length;
+  const inProgress = verifications.filter(
+    (v) => v.status !== "completed",
+  ).length;
 
   return (
     <main className="mx-auto flex w-full max-w-4xl flex-col gap-8 px-4 py-16">

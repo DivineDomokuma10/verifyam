@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 
 import { env } from "@/config";
 import { deleteSession } from "@/services";
+import { ok } from "@/utils";
 
 const logoutController = async (req: Request, res: Response) => {
   const token = req.cookies?.[env.COOKIE_NAME] as string;
@@ -10,7 +11,7 @@ const logoutController = async (req: Request, res: Response) => {
 
   res.clearCookie(env.COOKIE_NAME, { path: "/" });
 
-  res.json({ status: "success", message: "Logged out" });
+  return ok(res, { message: "Logged out" });
 };
 
 export default logoutController;
