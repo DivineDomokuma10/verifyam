@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { verifyListingSchema } from "@/schemas/verification";
 import type { TVerifyListingValues } from "@/schemas/verification";
+import type { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -25,7 +26,11 @@ export function DetailsForm({
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<TVerifyListingValues>({
+  } = useForm<
+    z.input<typeof verifyListingSchema>,
+    unknown,
+    TVerifyListingValues
+  >({
     resolver: zodResolver(verifyListingSchema),
     defaultValues: {
       address: defaultValues.address ?? "",

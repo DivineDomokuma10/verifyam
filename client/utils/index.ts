@@ -3,6 +3,8 @@ import { clsx, type ClassValue } from "clsx";
 
 import AuthApi from "@/api/auth";
 import AuthStore from "@/store/auth";
+import SessionStore from "@/store/session";
+import { queryClient } from "@/providers/react-query";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -21,10 +23,14 @@ export function getMutationError(error: unknown, fallback = "Something went wron
 }
 
 export const handleLogout = async () => {
-  await AuthApi.logout();
-
-  AuthStore.getState().clearAuthData?.();
-  window.location.replace("/login");
+  try {
+    await AuthApi.logout();
+  } finally {
+    AuthStore.getState().clearAuthData?.();
+    SessionStore.getState().mutateSession(null);
+    queryClient.clear();
+    window.location.replace("/login");
+  }
 };
 
 export function formatRelativeTime(date: string | Date): string {

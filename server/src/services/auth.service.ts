@@ -35,6 +35,8 @@ export async function createSession(userId: string): Promise<string> {
 }
 
 export async function deleteSession(token: string): Promise<void> {
+  if (!token) return;
+
   await prisma.session.deleteMany({ where: { token } });
 }
 

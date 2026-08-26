@@ -5,15 +5,15 @@ import {
   signupController,
   logoutController,
 } from "@/controller/auth";
-import { requireAuth } from "@/middleware";
+import { authRateLimit, requireAuth, requireTrustedOrigin } from "@/middleware";
 
 const router = Router();
 
-router.post("/login", loginController);
+router.post("/login", requireTrustedOrigin, authRateLimit, loginController);
 
-router.post("/signup", signupController);
+router.post("/signup", requireTrustedOrigin, authRateLimit, signupController);
 
-router.get("/logout", logoutController);
+router.post("/logout", requireTrustedOrigin, logoutController);
 
 router.use(requireAuth);
 

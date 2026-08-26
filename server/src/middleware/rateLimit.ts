@@ -9,9 +9,12 @@ import { prisma } from "@/lib";
  * store (e.g. Redis) when running multiple instances.
  */
 const hourlyHits = new Map<string, number[]>();
+const authHits = new Map<string, number[]>();
 
 const HOUR_MS = 60 * 60 * 1000;
 const DAY_MS = 24 * 60 * 60 * 1000;
+const AUTH_WINDOW_MS = 15 * 60 * 1000;
+const MAX_AUTH_ATTEMPTS = 10;
 
 const startOfDay = (): Date => {
   const now = new Date();
@@ -57,5 +60,35 @@ export async function createVerificationRateLimit(
   }
 
   hourlyHits.set(userId, [...hits, now]);
+  next();
+}
+
+export function authRateLimit(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  const email =
+    typeof req.body === "object" &&
+    req.body !== null &&
+    "email" in req.body &&
+    typeof req.body.email === "string"
+      ? req.body.email.toLowerCase()
+      : "unknown";
+  const key = `${req.ip}:${email}`;
+  const now = Date.now();
+  const hits = (authHits.get(key) ?? []).filter(
+    (timestamp) => now - timestamp < AUTH_WINDOW_MS,
+  );
+
+  if (hits.length >= MAX_AUTH_ATTEMPTS) {
+    res.status(429).json({
+      status: "error",
+      message: "Too many attempts. Please wait before trying again.",
+    });
+    return;
+  }
+
+  authHits.set(key, [...hits, now]);
   next();
 }

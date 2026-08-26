@@ -7,9 +7,15 @@ export const assertEnv = (env: string, message?: string): string => {
 };
 
 export const getHeaderConfig = <P = unknown>(payload?: P) => {
-  return isObject(payload)
-    ? { "Content-Type": "application/json", Accept: "application/json" }
-    : { "Content-Type": "multipart/form-data" };
+  if (payload === undefined || isFormData(payload)) {
+    return { Accept: "application/json" };
+  }
+
+  if (isObject(payload)) {
+    return { "Content-Type": "application/json", Accept: "application/json" };
+  }
+
+  return { Accept: "application/json" };
 };
 
 export const isArray = (value: unknown): value is unknown[] => {

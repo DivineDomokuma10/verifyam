@@ -37,7 +37,7 @@ class AuthApi {
   }
 
   static async logout() {
-    const res = await CallApi<TApiResponse<null>>(AUTH_ENDPOINTS.LOGOUT, "GET");
+    const res = await CallApi<TApiResponse<null>>(AUTH_ENDPOINTS.LOGOUT, "POST");
 
     if (res.status === "error") {
       return { message: res.message };

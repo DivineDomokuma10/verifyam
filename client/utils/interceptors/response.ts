@@ -2,6 +2,7 @@ import { AxiosError } from "axios";
 
 import AuthStore from "@/store/auth";
 import SessionStore from "@/store/session";
+import { queryClient } from "@/providers/react-query";
 import { OPEN_ROUTE } from "../constant";
 
 export const responseInterceptorErrFunc = async (error: AxiosError) => {
@@ -24,6 +25,7 @@ export const responseInterceptorErrFunc = async (error: AxiosError) => {
   AuthStore.getState().clearAuthData?.();
   SessionStore.getState().mutateSession(null);
   SessionStore.getState().setLoading(false);
+  queryClient.clear();
 
   return Promise.reject(error);
 };

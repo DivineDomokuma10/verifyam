@@ -11,6 +11,11 @@ out
 
 # env files
 .env*
+!.env.example
+!**/.env.example
+
+# local fix notes
+docs/fix-notes/
 
 # misc
 .DS_Store

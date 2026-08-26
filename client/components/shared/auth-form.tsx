@@ -6,11 +6,12 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { loginSchema } from "@/schemas/auth";
-import type { TLoginFormValues } from "@/types/schema-derived";
+import { loginSchema, signupSchema } from "@/schemas/auth";
+import type { TLoginFormValues, TSignupFormValues } from "@/types/schema-derived";
 import { useLoginMutation, useSignupMutation } from "@/hook/queries/auth";
 import AuthStore from "@/store/auth";
 import SessionStore from "@/store/session";
+import { queryClient } from "@/providers/react-query";
 import type { IUserResponse } from "@/interface";
 import { getMutationError } from "@/utils";
 import { Button } from "@/components/ui/button";
@@ -58,16 +59,17 @@ export function AuthForm({ mode }: AuthFormProps) {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<TLoginFormValues>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<TLoginFormValues | TSignupFormValues>({
+    resolver: zodResolver(isLogin ? loginSchema : signupSchema),
     defaultValues: { email: "", password: "" },
   });
 
-  const onSubmit = async (values: TLoginFormValues) => {
+  const onSubmit = async (values: TLoginFormValues | TSignupFormValues) => {
     setServerError(null);
 
     const handleSuccess = (res: { data?: IUserResponse | null }) => {
       if (res.data) {
+        queryClient.clear();
         mutateAuthData(res.data);
         mutateSession({ userId: res.data.id });
       }
@@ -79,12 +81,12 @@ export function AuthForm({ mode }: AuthFormProps) {
     };
 
     if (isLogin) {
-      loginMutation.mutate(values, {
+      loginMutation.mutate(values as TLoginFormValues, {
         onSuccess: handleSuccess,
         onError: handleError,
       });
     } else {
-      signupMutation.mutate(values, {
+      signupMutation.mutate(values as TSignupFormValues, {
         onSuccess: handleSuccess,
         onError: handleError,
       });

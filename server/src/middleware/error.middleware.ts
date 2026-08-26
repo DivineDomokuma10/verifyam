@@ -37,6 +37,15 @@ const toAppError = (error: unknown): AppError => {
     }
   }
 
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "type" in error &&
+    (error.type === "entity.parse.failed" || error.type === "entity.too.large")
+  ) {
+    return AppError.badRequest("Invalid request body", { cause: error });
+  }
+
   return AppError.internal("Something went wrong. Please try again.", {
     cause: error,
   });
